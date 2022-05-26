@@ -1,0 +1,21 @@
+### Root ###
+.metadata
+.sonarlint
+
+### microservices-product ###
+/microservices-product/.apt_generated
+/microservices-product/.classpath
+/microservices-product/.factorypath
+/microservices-product/.project
+/microservices-product/.settings
+/microservices-product/.springBeans
+/microservices-product/.sts4-cache
+
+### microservices-shopping ###
+/microservices-shopping/.apt_generated
+/microservices-shopping/.classpath
+/microservices-shopping/.factorypath
+/microservices-shoppingt/.project
+/microservices-shopping/.settings
+/microservices-shopping/.springBeans
+/microservices-shopping/.sts4-cache
