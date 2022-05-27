@@ -10,6 +10,7 @@
 /microservices-product/.settings
 /microservices-product/.springBeans
 /microservices-product/.sts4-cache
+/microservices-product/target/
 
 ### microservices-shopping ###
 /microservices-shopping/.apt_generated
@@ -19,6 +20,18 @@
 /microservices-shopping/.settings
 /microservices-shopping/.springBeans
 /microservices-shopping/.sts4-cache
+/microservices-shopping/target/
 
 ### microservices-config-data ###
 /microservices-config-data/.project
+
+### microservices-customer ###
+/microservices-customer/.apt_generated
+/microservices-customer/.apt_generated_tests
+/microservices-customer/.classpath
+/microservices-customer/.factorypath
+/microservices-customer/.project
+/microservices-customer/.settings
+/microservices-customer/.springBeans
+/microservices-customer/.sts4-cache
+/microservices-customer/target/
