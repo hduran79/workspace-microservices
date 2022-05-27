@@ -19,3 +19,6 @@
 /microservices-shopping/.settings
 /microservices-shopping/.springBeans
 /microservices-shopping/.sts4-cache
+
+### microservices-config-data ###
+/microservices-config-data/.project
