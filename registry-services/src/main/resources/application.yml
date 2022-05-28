@@ -2,13 +2,11 @@
 spring:
    config:
       import: optional:configserver:http://localhost:8081
-   datasource:
-      initialization-mode: always
    application: 
-      name: customer-services
+      name: registry-services
    cloud:
       config:
-         name: customer-services
+         name: registry-services
          username: root
          password: s3cr3t
          fail-fast: false

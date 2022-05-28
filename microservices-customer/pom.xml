@@ -1,24 +1,24 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
-    
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+
+	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.7.0</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-  
-  
-    <groupId>com.votre.customer</groupId>
-    <artifactId>microservices-customer</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
-    <name>microservices-customer</name>
-    <description>microservices-customer</description>
-  
-  
-  	<properties>
+
+
+	<groupId>com.votre.customer</groupId>
+	<artifactId>microservices-customer</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>microservices-customer</name>
+	<description>microservices-customer</description>
+
+	<properties>
 		<java.version>1.8</java.version>
 		<spring-cloud.version>2021.0.3-SNAPSHOT</spring-cloud.version>
 	</properties>
@@ -36,14 +36,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.springframework.cloud</groupId> -->
-		<!-- <artifactId>spring-cloud-starter-config</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.springframework.cloud</groupId> -->
-		<!-- <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
 		<!-- <dependency> -->
 		<!-- <groupId>org.springframework.cloud</groupId> -->
 		<!-- <artifactId>spring-cloud-starter-sleuth</artifactId> -->
@@ -76,7 +76,7 @@
 		</dependency>
 
 	</dependencies>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -105,8 +105,8 @@
 			</plugin>
 		</plugins>
 	</build>
-  
-    <repositories>
+
+	<repositories>
 		<repository>
 			<id>spring-snapshots</id>
 			<name>Spring Snapshots</name>
@@ -124,5 +124,5 @@
 			</snapshots>
 		</repository>
 	</repositories>
-  
+
 </project>
