@@ -4,10 +4,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.votre.microservices.shopping.client.ICustomerClient;
+import com.votre.microservices.shopping.client.IProductsClient;
 import com.votre.microservices.shopping.config.MicroServicesBusinessException;
+import com.votre.microservices.shopping.dto.CustomerDTO;
 import com.votre.microservices.shopping.dto.InvoiceDTO;
+import com.votre.microservices.shopping.dto.InvoiceItemDTO;
+import com.votre.microservices.shopping.dto.ProductDTO;
 import com.votre.microservices.shopping.entity.Invoice;
 import com.votre.microservices.shopping.entity.InvoiceItem;
 import com.votre.microservices.shopping.repository.IInvoiceItemsRepository;
@@ -33,15 +39,18 @@ public class InvoiceServiceImpl implements IInvoiceService {
 
 	@Autowired
 	IInvoiceItemsRepository invoiceItemsRepository;
-
+	
+	@Autowired
+	ICustomerClient customerClient;
+	
+	@Autowired
+	IProductsClient productClient;
+	
 	@Override
 	public List<Invoice> findInvoiceAll() {
 		return invoiceRepository.findAll();
 	}
 
-	/**
-	 * 
-	 */
 	@Override
 	public Invoice createInvoice(InvoiceDTO invoice) {
 
@@ -71,8 +80,8 @@ public class InvoiceServiceImpl implements IInvoiceService {
 		}).collect(Collectors.toList());
 		
 		System.out.println("CustomerID: " + invoice.getCustomerId());
-
-		return invoiceRepository.save(Invoice.builder()
+		
+		invoiceDB = invoiceRepository.save(Invoice.builder()
 				.description(invoice.getDescription())
 				.state(invoice.getState())
 				.numberInvoice(invoice.getNumberInvoice())
@@ -80,6 +89,12 @@ public class InvoiceServiceImpl implements IInvoiceService {
 				.customerId(invoice.getCustomerId())
 				.items(invoice.getItems())
 				.build());
+		
+        invoiceDB.getItems().forEach( invoiceItem -> {
+            productClient.updateStockProduct( invoiceItem.getProductId(), invoiceItem.getQuantity() * -1);
+        });
+
+		return invoiceDB;
 	}
 
 	@Override
@@ -112,9 +127,54 @@ public class InvoiceServiceImpl implements IInvoiceService {
 		return invoiceRepository.save(Invoice.builder().state("DELETED").build());
 	}
 
+//	@Override
+//	public Invoice getInvoice(Long id) {
+//		return invoiceRepository.findById(id).orElse(null);
+//	}
+	
 	@Override
-	public Invoice getInvoice(Long id) {
-		return invoiceRepository.findById(id).orElse(null);
-	}
+    public Invoice getInvoice(Long id) {
+
+        Invoice eInvoice = invoiceRepository.findById(id).orElse(null);
+        
+        List<InvoiceItemDTO> invoiceItemDTO = eInvoice.getItems().stream().map(item -> 
+        InvoiceItemDTO.builder()
+        .id(item.getId())
+        .quantity(item.getQuantity())
+        .price(item.getPrice())
+        .productId(item.getProductId())
+        .subTotal(item.getSubTotal())
+        .build())
+        .collect(Collectors.toList());
+        		
+        InvoiceDTO invoice = InvoiceDTO.builder()
+        		.id(eInvoice.getId())
+        		.customerId(eInvoice.getCustomerId())
+        		.description(eInvoice.getDescription())
+        		.numberInvoice(eInvoice.getNumberInvoice())
+        		.state(eInvoice.getState())
+        		.createAt(eInvoice.getCreateAt())
+        		.items(invoiceItemDTO)
+        		.build();
+        
+        
+        if (null != invoice ){
+        	ResponseEntity<?> rEntityCustomer = customerClient.getCustomer(invoice.getCustomerId());
+        	CustomerDTO customer = (CustomerDTO) rEntityCustomer.getBody();
+            invoice.setCustomer(customer);
+            
+            List<InvoiceItem> listItem=invoice.getItems().stream().map(invoiceItem -> {
+            	
+            	ResponseEntity<ProductDTO> rEntityProduct = productClient.getProduct(invoiceItem.getProductId());
+                
+                ProductDTO product = rEntityProduct.getBody();
+                
+                invoiceItem.setProduct(product);
+                return invoiceItem;
+            }).collect(Collectors.toList());
+            invoice.setItems(listItem);
+        }
+        return invoice ;
+    }
 
 }
