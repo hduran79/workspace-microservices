@@ -18,7 +18,7 @@ public interface ICustomerService {
     public Customer createCustomer(CustomerDTO customer, BindingResult result);
     public ResponseEntity<?> updateCustomer(CustomerDTO customer);
     public ResponseEntity<?> deleteCustomer(long id);
-    public ResponseEntity<?> getCustomer(Long id);
+    public ResponseEntity<Customer> getCustomer(Long id);
     
 
 }

@@ -6,10 +6,14 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.votre.microservices.shopping.client.ICustomerClient;
+import com.votre.microservices.shopping.client.IProductClient;
 import com.votre.microservices.shopping.config.MicroServicesBusinessException;
 import com.votre.microservices.shopping.dto.InvoiceDTO;
 import com.votre.microservices.shopping.entity.Invoice;
 import com.votre.microservices.shopping.entity.InvoiceItem;
+import com.votre.microservices.shopping.model.CustomerDTO;
+import com.votre.microservices.shopping.model.ProductDTO;
 import com.votre.microservices.shopping.repository.IInvoiceItemsRepository;
 import com.votre.microservices.shopping.repository.IInvoiceRepository;
 
@@ -33,6 +37,12 @@ public class InvoiceServiceImpl implements IInvoiceService {
 
 	@Autowired
 	IInvoiceItemsRepository invoiceItemsRepository;
+
+	@Autowired
+	ICustomerClient customerClient;
+
+	@Autowired
+	IProductClient productClient;
 
 	@Override
 	public List<Invoice> findInvoiceAll() {
@@ -60,26 +70,25 @@ public class InvoiceServiceImpl implements IInvoiceService {
 			Double quantity = c.getQuantity();
 
 			Double subamount = 0D;
-			
+
 			if (price > 0 && quantity > 0) {
 				subamount = quantity * price;
 			}
-			
+
 			c.setSubTotal(subamount);
-			return c;			
+			return c;
 
 		}).collect(Collectors.toList());
-		
-		System.out.println("CustomerID: " + invoice.getCustomerId());
 
-		return invoiceRepository.save(Invoice.builder()
-				.description(invoice.getDescription())
-				.state(invoice.getState())
-				.numberInvoice(invoice.getNumberInvoice())
-				.createAt(invoice.getCreateAt())
-				.customerId(invoice.getCustomerId())
-				.items(invoice.getItems())
-				.build());
+		invoiceDB = invoiceRepository.save(Invoice.builder().description(invoice.getDescription())
+				.state(invoice.getState()).numberInvoice(invoice.getNumberInvoice()).createAt(invoice.getCreateAt())
+				.customerId(invoice.getCustomerId()).items(invoice.getItems()).build());
+
+		invoiceDB.getItems().forEach(i -> {
+			productClient.updateStockProduct(i.getProductId(), i.getQuantity() * -1);
+		});
+
+		return invoiceDB;
 	}
 
 	@Override
@@ -114,7 +123,24 @@ public class InvoiceServiceImpl implements IInvoiceService {
 
 	@Override
 	public Invoice getInvoice(Long id) {
-		return invoiceRepository.findById(id).orElse(null);
+
+		Invoice invoice = invoiceRepository.findById(id).orElse(null);
+
+		if (null != invoice) {
+			CustomerDTO customer = customerClient.getCustomer(invoice.getCustomerId()).getBody();
+			invoice.setCustomer(customer);
+
+			List<InvoiceItem> lisItems = invoice.getItems().stream().map(it -> {
+				ProductDTO product = productClient.getProduct(it.getProductId()).getBody();
+				it.setProduct(product);
+				return it;
+			}).collect(Collectors.toList());
+
+			invoice.setItems(lisItems);
+		}
+
+		return invoice;
+
 	}
 
 }

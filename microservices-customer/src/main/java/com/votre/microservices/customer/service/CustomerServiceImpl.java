@@ -151,7 +151,7 @@ public class CustomerServiceImpl implements ICustomerService {
     }
 
     @Override
-    public ResponseEntity<?> getCustomer(Long id) {
+    public ResponseEntity<Customer> getCustomer(Long id) {
         
         log.info("Fetching Customer with id {}", id);
         Customer customer =  getCustomerLocal(id);
