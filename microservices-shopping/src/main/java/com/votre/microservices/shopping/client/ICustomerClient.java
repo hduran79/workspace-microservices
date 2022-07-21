@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.votre.microservices.shopping.model.CustomerDTO;
 
-@FeignClient(name = "customer-services", path = "/customers")
+@FeignClient(name = "customer-services", fallback = CustomerHystrixFallbackFactory.class)
 public interface ICustomerClient {
 
-	@GetMapping(value = "/{id}")
+    @GetMapping(value = "/customers/{id}")
     public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("id") long id);
-	
+
 }
